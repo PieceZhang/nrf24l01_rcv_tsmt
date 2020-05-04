@@ -105,9 +105,9 @@ int main(void)
 		HAL_Delay(1000);
 	}
   printf("NRF24L01无线模块硬件连接正常\n");
-
-  NRF24L01_TX_Mode();
-  printf("进入数据发送模式，每1s发送一次数据\n");
+  
+  NRF24L01_RX_Mode();
+  printf("进入数据接收模式\n");
 
   while (1)
   {
@@ -115,16 +115,12 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 		HAL_GPIO_TogglePin(GPIOC,GPIO_PIN_13);
-		HAL_Delay(1000);
-		printf("%c",NRF24L01_TxPacket(tmp_buf));
-//		if(NRF24L01_TxPacket(tmp_buf)==TX_OK)
-//    {
-//      printf("NRF24L01无线模块数据发送成功：%s\n",tmp_buf);
-//    }
-//    else
-//    {
-//      printf("NRF24L01无线模块数据发送失败\n");
-//    }     
+    if(NRF24L01_RxPacket(tmp_buf)==0)
+    {
+      tmp_buf[32]=0;//加入字符串结束符      
+      printf("NRF24L01无线模块数据接收成功：%s\n",tmp_buf);
+    }
+    HAL_Delay(10);      
   }
   /* USER CODE END 3 */
 }
