@@ -69,7 +69,7 @@ void SystemClock_Config(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-	uint8_t tmp_buf[33]="test";
+	uint8_t tmp_buf[33];
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -103,22 +103,42 @@ int main(void)
   while(NRF24L01_Check())
 	{
     printf("连接异常\n"); 
-		HAL_Delay(1000);
+		HAL_GPIO_TogglePin(GPIOC,GPIO_PIN_13);
+		HAL_Delay(300);
 	}
-  printf("连接正常\n");
   
-  NRF24L01_RX_Mode();
-  printf("进入数据接收模式\n");
+  NRF24L01_RX_Mode(); //进入数据接收模式
 
   while (1)
   {
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    if(NRF24L01_RxPacket(tmp_buf)==0)
+    if(NRF24L01_RxPacket((uint8_t*)tmp_buf)==0)
     {
-      tmp_buf[32]=0;//加入字符串结束符      
-      printf("%s\n",tmp_buf);
+			/*每调用一次Rx函数，一次性存满32字节的空间，不论接收到的数据有多长*/
+			/*Rx函数接收长度与RX_PLOAD_WIDTH宏有关，在.h中定义，默认32字节*/
+			/*更改接受长度请更改宏！*/
+			
+			/*从数组第0位开始的6bytes，即数组0-5位（每字节8bit：发送三个16bit数=6个8bit数）*/
+			HAL_UART_Transmit(&huart1, (uint8_t *)tmp_buf, 6, 0x0a); 
+			
+			/*另一种写法，功能一样，都是取数组首地址，并发送数组0-5位*/
+//			HAL_UART_Transmit(&huart1, (uint8_t *)&tmp_buf[0], 6, 0x0a);  
+			
+			/*效果等同于将数组六个单元分别发送*/
+//			HAL_UART_Transmit(&huart1, (uint8_t *)&tmp_buf[0], 1, 0x0a);
+//			HAL_UART_Transmit(&huart1, (uint8_t *)&tmp_buf[1], 1, 0x0a);
+//			HAL_UART_Transmit(&huart1, (uint8_t *)&tmp_buf[2], 1, 0x0a);
+//			HAL_UART_Transmit(&huart1, (uint8_t *)&tmp_buf[3], 1, 0x0a);
+//			HAL_UART_Transmit(&huart1, (uint8_t *)&tmp_buf[4], 1, 0x0a);
+//			HAL_UART_Transmit(&huart1, (uint8_t *)&tmp_buf[5], 1, 0x0a);
+			
+			
+			/*初始程序*/
+//      tmp_buf[32]=0;//加入字符串结束符      
+//      printf("%s",tmp_buf);
+
     }     
   }
   /* USER CODE END 3 */

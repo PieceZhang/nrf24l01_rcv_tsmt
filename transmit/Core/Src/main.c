@@ -70,7 +70,10 @@ int main(void)
 {
   /* USER CODE BEGIN 1 */
 	uint8_t tmp_buf[33]="This Piange'test XD 蛤蛤蛤";
-	float numtest[3]={0};
+	uint16_t numtest[33]={0};
+	numtest[0]=1111;
+	numtest[1]=3333;
+	numtest[2]=6666; //57 04 05 0D 0A 1A
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -104,12 +107,11 @@ int main(void)
   while(NRF24L01_Check())
 	{
     printf("连接异常\n"); 
-		HAL_Delay(1000);
+		HAL_GPIO_TogglePin(GPIOC,GPIO_PIN_13);
+		HAL_Delay(300);
 	}
-  printf("连接正常\n");
 
-  NRF24L01_TX_Mode();
-  printf("进入数据发送模式，每1s发送一次数据\n");
+  NRF24L01_TX_Mode();  //进入数据发送模式，每1s发送一次数据
 
   while (1)
   {
@@ -117,8 +119,26 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 		HAL_GPIO_TogglePin(GPIOC,GPIO_PIN_13);
-		HAL_Delay(1);
-		NRF24L01_TxPacket(numtest);
+		HAL_Delay(1000);
+		
+		
+		/*下面是错误用法：！ 每调用一次Tx函数，就发送从起始地址算起的32字节，而不是只发送数组中的一个单元*/
+		/*这样使用会导致发送函数寻址进入无效的地址，高位溢出自动补0*/
+		/*HAL库串口发送函数原理类似*/
+////	错误	NRF24L01_TxPacket((uint8_t *)&numtest[0]);
+////	错误	NRF24L01_TxPacket((uint8_t *)&numtest[1]);
+////	错误	NRF24L01_TxPacket((uint8_t *)&numtest[2]);
+		
+		
+		/*Tx函数发送长度与TX_PLOAD_WIDTH宏有关，在.h中定义，默认32字节*/
+		/*更改发送长度请更改宏！*/
+		NRF24L01_TxPacket((uint8_t *)numtest); //发送之前先强制类型转换以匹配uint8_t型的指针，指针只标记首地址，不影响发送数据的内容
+		
+		/*另一种写法，效果一样，均为取首地址*/
+//		NRF24L01_TxPacket((uint8_t *)&numtest[0]);
+		
+		
+		/*初始程序*/
 //		if(NRF24L01_TxPacket(tmp_buf)==TX_OK)
 //    {
 //      printf("发送成功：%s\n",tmp_buf);
@@ -127,6 +147,7 @@ int main(void)
 //    {
 //      printf("发送失败\n");
 //    }     
+
   }
   /* USER CODE END 3 */
 }
