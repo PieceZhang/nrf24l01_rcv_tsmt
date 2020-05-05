@@ -99,12 +99,13 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 
+	/*改编自硬石科技历程*/
   while(NRF24L01_Check())
 	{
-    printf("硬件查寻不到NRF24L01无线模块\n"); 
+    printf("连接异常\n"); 
 		HAL_Delay(1000);
 	}
-  printf("NRF24L01无线模块硬件连接正常\n");
+  printf("连接正常\n");
   
   NRF24L01_RX_Mode();
   printf("进入数据接收模式\n");
@@ -114,13 +115,11 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-		HAL_GPIO_TogglePin(GPIOC,GPIO_PIN_13);
     if(NRF24L01_RxPacket(tmp_buf)==0)
     {
       tmp_buf[32]=0;//加入字符串结束符      
-      printf("NRF24L01无线模块数据接收成功：%s\n",tmp_buf);
-    }
-    HAL_Delay(10);      
+      printf("%s\n",tmp_buf);
+    }     
   }
   /* USER CODE END 3 */
 }

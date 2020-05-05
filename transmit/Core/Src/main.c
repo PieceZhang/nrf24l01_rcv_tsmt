@@ -69,7 +69,8 @@ void SystemClock_Config(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-	uint8_t tmp_buf[33]="test";
+	uint8_t tmp_buf[33]="This Piange'test XD 蛤蛤蛤";
+	float numtest[3]={0};
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -98,13 +99,14 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-
+	
+	/*改编自硬石科技历程*/
   while(NRF24L01_Check())
 	{
-    printf("硬件查寻不到NRF24L01无线模块\n"); 
+    printf("连接异常\n"); 
 		HAL_Delay(1000);
 	}
-  printf("NRF24L01无线模块硬件连接正常\n");
+  printf("连接正常\n");
 
   NRF24L01_TX_Mode();
   printf("进入数据发送模式，每1s发送一次数据\n");
@@ -115,15 +117,15 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 		HAL_GPIO_TogglePin(GPIOC,GPIO_PIN_13);
-		HAL_Delay(1000);
-		printf("%c",NRF24L01_TxPacket(tmp_buf));
+		HAL_Delay(1);
+		NRF24L01_TxPacket(numtest);
 //		if(NRF24L01_TxPacket(tmp_buf)==TX_OK)
 //    {
-//      printf("NRF24L01无线模块数据发送成功：%s\n",tmp_buf);
+//      printf("发送成功：%s\n",tmp_buf);
 //    }
 //    else
 //    {
-//      printf("NRF24L01无线模块数据发送失败\n");
+//      printf("发送失败\n");
 //    }     
   }
   /* USER CODE END 3 */
