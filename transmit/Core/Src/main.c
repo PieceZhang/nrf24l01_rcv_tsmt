@@ -70,10 +70,10 @@ int main(void)
 {
   /* USER CODE BEGIN 1 */
 	uint8_t tmp_buf[33]="This Piange'test XD 蛤蛤蛤";
-	uint16_t numtest[33]={0};
-	numtest[0]=1111;
-	numtest[1]=3333;
-	numtest[2]=6666; //57 04 05 0D 0A 1A
+	float numtest[3]={0};
+	numtest[0]=11.11;
+	numtest[1]=33.33;
+	numtest[2]=66.66; //57 04 05 0D 0A 1A
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -106,7 +106,7 @@ int main(void)
 	/*改编自硬石科技历程*/
   while(NRF24L01_Check())
 	{
-    printf("连接异常\n"); 
+    printf("ERROR\n"); 
 		HAL_GPIO_TogglePin(GPIOC,GPIO_PIN_13);
 		HAL_Delay(300);
 	}
@@ -119,7 +119,7 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 		HAL_GPIO_TogglePin(GPIOC,GPIO_PIN_13);
-		HAL_Delay(1000);
+		HAL_Delay(1);
 		
 		
 		/*下面是错误用法：！ 每调用一次Tx函数，就发送从起始地址算起的32字节，而不是只发送数组中的一个单元*/
@@ -131,6 +131,7 @@ int main(void)
 		
 		
 		/*Tx函数发送长度与TX_PLOAD_WIDTH宏有关，在.h中定义，默认32字节*/
+		/*收发两端的WIDTH宏要保持一致！*/
 		/*更改发送长度请更改宏！*/
 		NRF24L01_TxPacket((uint8_t *)numtest); //发送之前先强制类型转换以匹配uint8_t型的指针，指针只标记首地址，不影响发送数据的内容
 		

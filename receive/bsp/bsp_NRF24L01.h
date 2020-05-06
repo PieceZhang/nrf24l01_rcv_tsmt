@@ -36,8 +36,8 @@
 // NRF24L01发送接收数据宽度定义
 #define TX_ADR_WIDTH                                  5   	//5字节的地址宽度
 #define RX_ADR_WIDTH                                  5   	//5字节的地址宽度
-#define TX_PLOAD_WIDTH                                32  	//32字节的用户数据宽度
-#define RX_PLOAD_WIDTH                                32  	//32字节的用户数据宽度
+#define TX_PLOAD_WIDTH                                12  	//32字节的用户数据宽度
+#define RX_PLOAD_WIDTH                                12  	//32字节的用户数据宽度
 
 //NRF24L01寄存器操作命令
 #define NRF_READ_REG                                  0x00  //读配置寄存器,低5位为寄存器地址

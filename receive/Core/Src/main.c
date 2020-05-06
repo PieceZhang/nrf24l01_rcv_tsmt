@@ -69,7 +69,8 @@ void SystemClock_Config(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-	uint8_t tmp_buf[33];
+	uint8_t tmp_buf[RX_PLOAD_WIDTH];
+	const uint8_t SendBuffer[4]={0x03,0xFC,0xFC,0x03};
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -102,7 +103,7 @@ int main(void)
 	/*改编自硬石科技历程*/
   while(NRF24L01_Check())
 	{
-    printf("连接异常\n"); 
+    printf("ERROR\n"); 
 		HAL_GPIO_TogglePin(GPIOC,GPIO_PIN_13);
 		HAL_Delay(300);
 	}
@@ -118,14 +119,24 @@ int main(void)
     {
 			/*每调用一次Rx函数，一次性存满32字节的空间，不论接收到的数据有多长*/
 			/*Rx函数接收长度与RX_PLOAD_WIDTH宏有关，在.h中定义，默认32字节*/
+			/*收发两端的WIDTH宏要保持一致！*/
 			/*更改接受长度请更改宏！*/
 			
 			/*从数组第0位开始的6bytes，即数组0-5位（每字节8bit：发送三个16bit数=6个8bit数）*/
-			HAL_UART_Transmit(&huart1, (uint8_t *)tmp_buf, 6, 0x0a); 
-			
+//			HAL_UART_Transmit(&huart1, (uint8_t *)tmp_buf, 6, 0x0a); 
+
 			/*另一种写法，功能一样，都是取数组首地址，并发送数组0-5位*/
 //			HAL_UART_Transmit(&huart1, (uint8_t *)&tmp_buf[0], 6, 0x0a);  
 			
+			
+			/*虚拟示波器显示float变量*/
+			HAL_UART_Transmit(&huart1, (uint8_t *)&SendBuffer[0], 1, 0x0a);
+			HAL_UART_Transmit(&huart1, (uint8_t *)&SendBuffer[1], 1, 0x0a);
+			HAL_UART_Transmit(&huart1, (uint8_t *)tmp_buf, RX_PLOAD_WIDTH, 0x0a);
+			HAL_UART_Transmit(&huart1, (uint8_t *)&SendBuffer[2], 1, 0x0a);
+			HAL_UART_Transmit(&huart1, (uint8_t *)&SendBuffer[3], 1, 0x0a);
+
+						
 			/*效果等同于将数组六个单元分别发送*/
 //			HAL_UART_Transmit(&huart1, (uint8_t *)&tmp_buf[0], 1, 0x0a);
 //			HAL_UART_Transmit(&huart1, (uint8_t *)&tmp_buf[1], 1, 0x0a);
@@ -139,7 +150,8 @@ int main(void)
 //      tmp_buf[32]=0;//加入字符串结束符      
 //      printf("%s",tmp_buf);
 
-    }     
+    }    
+		
   }
   /* USER CODE END 3 */
 }
