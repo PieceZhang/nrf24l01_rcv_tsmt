@@ -117,6 +117,7 @@ int main(void)
     /* USER CODE BEGIN 3 */
     if(NRF24L01_RxPacket((uint8_t*)tmp_buf)==0)
     {
+			HAL_GPIO_TogglePin(GPIOC,GPIO_PIN_13);
 			/*每调用一次Rx函数，一次性存满32字节的空间，不论接收到的数据有多长*/
 			/*Rx函数接收长度与RX_PLOAD_WIDTH宏有关，在.h中定义，默认32字节*/
 			/*收发两端的WIDTH宏要保持一致！*/

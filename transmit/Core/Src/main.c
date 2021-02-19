@@ -119,7 +119,7 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 		HAL_GPIO_TogglePin(GPIOC,GPIO_PIN_13);
-		HAL_Delay(1);
+		HAL_Delay(10);
 		
 		
 		/*下面是错误用法：！ 每调用一次Tx函数，就发送从起始地址算起的32字节，而不是只发送数组中的一个单元*/
